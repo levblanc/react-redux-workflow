@@ -4,15 +4,11 @@ import { Provider } from 'react-redux'
 import { Router, browserHistory } from 'react-router'
 import { syncHistoryWithStore } from 'react-router-redux'
 import createReduxStore from './reduxStore/createStore'
-import globalConfig from '../configs/global'
-
-let isDevelopment = globalConfig.ENV === 'development'
 
 let store = createReduxStore({}, browserHistory)
 let history = syncHistoryWithStore(browserHistory, store, {
   selectLocationState: (state) => state.router
 })
-
 
 // ========================================================
 // appInit Setup
@@ -24,7 +20,7 @@ let appInit = (routerKey = null) => {
 
   ReactDOM.render(
     <Provider store={store}>
-        <Router history={history} children={routes} key={routerKey} />
+      <Router history={history} children={routes} key={routerKey} />
     </Provider>,
     ROOT_NODE
   )
@@ -33,7 +29,7 @@ let appInit = (routerKey = null) => {
 // 开发状态下
 // 使用HMR进行页面自动reload
 // 使用RedBox捕捉并显示错误信息
-if (isDevelopment && module.hot) {
+if (__DEV__ && module.hot) {
   let renderApp = appInit
   let renderError = (error) => {
     let RedBox = require('redbox-react')
