@@ -13,11 +13,20 @@
   "author": "luoyi",
   "license": "ISC",
   "scripts": {
+    "mockup-dev": "better-npm-run mockup-dev",
     "dev": "better-npm-run dev",
     "build": "better-npm-run build",
     "dist": "better-npm-run dist"
   },
   "betterScripts": {
+    "mockup-dev": {
+      "command": "nodemon --exec babel-node bin/server.js",
+      "env": {
+        "NODE_ENV": "mockup-dev",
+        "PORT": "8080",
+        "DEBUG": "app:*"
+      }
+    },
     "dev": {
       "command": "nodemon --exec babel-node bin/server.js",
       "env": {
@@ -27,7 +36,7 @@
       }
     },
     "build": {
-      "command": "webpack --verbose --colors --display-error-details --config configs/webpack.js",
+      "command": "webpack --verbose --colors --display-error-details --config src/configs/webpack.js",
       "env": {
         "NODE_ENV": "production",
         "DEBUG": "app:*"
@@ -56,11 +65,14 @@
     "react-router": "^2.4.0",
     "react-router-redux": "^4.0.4",
     "redux": "^3.5.2",
-    "redux-thunk": "^2.1.0"
+    "redux-thunk": "^2.1.0",
+    "superagent": "^1.8.3",
+    "superagent-mocker": "^0.4.0"
   },
   "devDependencies": {
     "better-npm-run": "0.0.8",
     "clean-webpack-plugin": "^0.1.6",
+    "connect-history-api-fallback": "^1.2.0",
     "css-loader": "^0.23.0",
     "debug": "^2.2.0",
     "express": "^4.13.4",
@@ -77,7 +89,6 @@
     "url-loader": "^0.5.6",
     "webpack": "^1.12.14",
     "webpack-dev-middleware": "^1.4.0",
-    "webpack-hot-middleware": "^2.5.0",
-    "yargs": "^4.0.0"
+    "webpack-hot-middleware": "^2.5.0"
   }
 }
