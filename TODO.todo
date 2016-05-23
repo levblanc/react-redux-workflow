@@ -1,0 +1,21 @@
+- webpack config
+  - dev config
+  - production config
+  ✔ same file with conditions @done (16-05-13 14:32)
+
+- npm scripts
+  ✔ dev @done (16-05-13 14:32)
+  ✔ compile @done (16-05-13 14:32)
+  ✔ dist: clean /dist && compile @done (16-05-13 14:32)
+
+✔ check webpackDefinePlugin @done (16-05-13 14:32)
+
+✔ server.js @done (16-05-14 21:07)
+
+✔ createReduxStore.js @done (16-05-15 15:52)
+
+✔ appInit.js @done (16-05-15 16:27)
+
+- router.js
+
+✔ redux devtool调通 @done (16-05-15 16:27)
