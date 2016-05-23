@@ -3,11 +3,18 @@
   "ignore": [
     ".git",
     "node_modules/**/node_modules",
-    "src",
+    "src/api/",
+    "src/apiMock/",
+    "src/components/",
+    "src/containers/",
+    "src/layout/",
+    "src/middleware/",
+    "src/reduxStore/",
+    "src/routes/",
     "dist"
   ],
   "watch": [
     "bin",
-    "configs"
+    "src/configs"
   ]
 }
