@@ -2,19 +2,23 @@ import { applyMiddleware, compose, createStore } from 'redux'
 import { routerMiddleware } from 'react-router-redux'
 import reduxThunk from 'redux-thunk'
 import initReducers from './reducers'
-import globalConfig from '../../configs/global'
+import reduxLogger from '../middleware/reduxLogger'
 
 export default (initialState = {}, history) => {
   // ======================================================
   // 配置Middlewares
   // ======================================================
-  let middlewares = [reduxThunk, routerMiddleware(history)]
+  let middlewares = [
+    reduxThunk,
+    routerMiddleware(history),
+    reduxLogger
+  ]
 
   // ========================================================
   // 把Redux Developer Tools放到enhancers内
   // ========================================================
   let enhancers = []
-  if (globalConfig.ENV === 'development') {
+  if (__DEV__) {
     let devToolsExtension = window.devToolsExtension
     if (typeof devToolsExtension === 'function') {
       enhancers.push(devToolsExtension())
