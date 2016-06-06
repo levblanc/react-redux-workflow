@@ -1,0 +1,67 @@
+reset-html5()
+
+*
+  margin 0
+  padding 0
+  font-family "Helvetica Neue","Hiragino Sans GB","Microsoft YaHei","\9ED1\4F53",Arial,sans-serif
+  font-size 18px;
+
+html
+  color #666
+
+ul, ol, li
+  list-style none
+
+a
+  text-decoration none
+
+button, input, select, textarea
+  font-size 100%
+  border none
+  outline none
+  color #666
+
+table
+  color #666
+  width 100%
+  border-collapse collapse
+  border-spacing 0
+  border 1px solid #dedede
+  table-layout fixed
+  tr
+    border 1px solid #dedede
+    line-height 60px
+    th
+      background #f2f2f2
+      font-size 20px
+      font-weight 500
+    td
+      text-align center
+      border 1px solid #dedede
+      line-height 32px
+      padding 14px 4px
+      word-break break-all
+
+::-webkit-scrollbar
+  width 0
+
+clearFix()
+  &:after
+    content ""
+    display block
+    width   0
+    height  0
+    clear   both
+
+touch()
+  cursor pointer
+  -webkit-tap-highlight-color rgba(0,0,0, 0.1)
+  tap-highlight-color rgba(0,0,0, 0.1)
+  outline none
+
+.loadingTips, .loadingFail
+  margin 20px 0
+  text-align center
+
+.tableWrapper
+  min-height 350px

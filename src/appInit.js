@@ -1,9 +1,9 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
-import { Provider } from 'react-redux'
+import React                      from 'react'
+import ReactDOM                   from 'react-dom'
+import { Provider }               from 'react-redux'
 import { Router, browserHistory } from 'react-router'
-import { syncHistoryWithStore } from 'react-router-redux'
-import createReduxStore from './reduxStore/createStore'
+import { syncHistoryWithStore }   from 'react-router-redux'
+import createReduxStore           from 'reduxStore/createStore'
 
 let store = createReduxStore({}, browserHistory)
 let history = syncHistoryWithStore(browserHistory, store, {
@@ -16,7 +16,7 @@ let history = syncHistoryWithStore(browserHistory, store, {
 const ROOT_NODE = document.getElementById('root')
 
 let appInit = (routerKey = null) => {
-  const routes = require('./routes/appRoutes').default(store)
+  const routes = require('routes/appRoutes').default(store)
 
   ReactDOM.render(
     <Provider store={store}>
@@ -43,7 +43,7 @@ if (__DEV__ && module.hot) {
       renderError(error)
     }
   }
-  module.hot.accept(['./routes/appRoutes'], () => render())
+  module.hot.accept(['routes/appRoutes'], () => render())
 }
 
 appInit()

@@ -1,9 +1,0 @@
-{
-  "errcode": 0,
-  "data": [
-    { "key": 1, "value": "all-1" },
-    { "key": 2, "value": "all-2" },
-    { "key": 3, "value": "all-3" },
-    { "key": 3, "value": "all-4" }
-  ]
-}

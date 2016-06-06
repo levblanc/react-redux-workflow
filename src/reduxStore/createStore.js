@@ -1,8 +1,11 @@
 import { applyMiddleware, compose, createStore } from 'redux'
 import { routerMiddleware } from 'react-router-redux'
-import reduxThunk from 'redux-thunk'
-import initReducers from './reducers'
-import reduxLogger from '../middleware/reduxLogger'
+import reduxThunk     from 'redux-thunk'
+import initReducers   from 'reduxStore/reducers'
+import reduxLogger    from 'middleware/reduxLogger'
+import ajaxMiddleware from 'middleware/ajaxMiddleware'
+import constants      from 'constants'
+
 
 export default (initialState = {}, history) => {
   // ======================================================
@@ -10,15 +13,19 @@ export default (initialState = {}, history) => {
   // ======================================================
   let middlewares = [
     reduxThunk,
-    routerMiddleware(history),
-    reduxLogger
+    ajaxMiddleware,
+    routerMiddleware(history)
   ]
+
+  // dev tool(sourcemap) 只在 alpha 和 test 环境开启
+  // logger 也做同样配置
+  !__ENV_RELEASE__ && middlewares.push(reduxLogger)
 
   // ========================================================
   // 把Redux Developer Tools放到enhancers内
   // ========================================================
   let enhancers = []
-  if (__DEV__) {
+  if (!__ENV_RELEASE__) {
     let devToolsExtension = window.devToolsExtension
     if (typeof devToolsExtension === 'function') {
       enhancers.push(devToolsExtension())

@@ -1,0 +1,24 @@
+@import '../../assets/styles/common.styl'
+
+.tabContainer
+  width 296px
+  margin 20px auto
+  font-size 22px
+  border 1px solid #39ac69
+  border-radius 6px
+  clearFix()
+  .item
+    width 50%
+    color #39ac69
+    padding 5px 0
+    text-align center
+    border-left 1px solid #39ac69
+    margin-left -1px
+    float left
+    touch()
+    &:first-child
+      border-left none
+      margin-left 0
+    &.selected
+      background #39ac69
+      color #fff

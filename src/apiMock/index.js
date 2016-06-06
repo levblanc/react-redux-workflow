@@ -1,9 +1,7 @@
-import demoToday  from './demo/today.json'
-import demoWeek   from './demo/week.json'
-import demoMonth  from './demo/month.json'
-import demoAll    from './demo/all.json'
-import demoSearch from './demo/search.json'
+import statsCategory  from './inventoryStats/category'
+import statsInventory from './inventoryStats/inventory'
 
-export default {
-  demoToday, demoWeek, demoMonth, demoAll, demoSearch
+export const inventoryStats = {
+  category: statsCategory,
+  inventory: statsInventory
 }

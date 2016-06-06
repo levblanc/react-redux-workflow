@@ -1,36 +1,16 @@
-import superagent   from 'superagent'
-import mocker       from 'superagent-mocker'
-import globalConfig from '../configs/global'
-import mockupApis   from '../apiMock/index'
+import superagent      from 'superagent'
+import mocker          from 'superagent-mocker'
+import constants       from 'constants'
+import * as mockupApis from 'apiMock/index'
 
 mocker(superagent)
 
-const formatUrl = (api, paramObj) => {
-  let query = ''
+const mockupReq = (method, api) => {
+  let targetPath = `${constants.SERVER_URI}/mockup-api/${api}`
+  let apiArr = api.split('/')
 
-  if(paramObj.keywords){
-    query = 'search'
-  }else{
-    query = paramObj.dateRange
-  }
-
-  return `${globalConfig.SERVER_URI}/mockup-api/${api}/${query}`
-}
-
-const capitalize = word => {
-  return word.charAt(0).toUpperCase() + word.slice(1)
-}
-
-const mockupReq = (method, api, paramObj) => {
-  let targetApi = ''
-  if(paramObj.keywords){
-    targetApi = api + 'Search'
-  }else{
-    targetApi = api + capitalize(Object.values(paramObj)[0])
-  }
-
-  mocker[method](formatUrl(api, paramObj), req => {
-    return mockupApis[targetApi]
+  mocker[method](targetPath, req => {
+    return mockupApis[apiArr[0]][apiArr[1]]
   })
 }
 

@@ -1,20 +1,8 @@
 {
   "verbose": false,
-  "ignore": [
-    ".git",
-    "node_modules/**/node_modules",
-    "src/api/",
-    "src/apiMock/",
-    "src/components/",
-    "src/containers/",
-    "src/layout/",
-    "src/middleware/",
-    "src/reduxStore/",
-    "src/routes/",
-    "dist"
-  ],
   "watch": [
-    "bin",
-    "src/configs"
+    "bin/server.js",
+    "src/configs",
+    "src/appInit.js"
   ]
 }

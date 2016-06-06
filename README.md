@@ -29,6 +29,3 @@ React Redux Workflow
 4. 在命令行中执行`npm run dev` 运行项目。
    在浏览器中打开`http://localhost:8080`可以看到页面
 
-## 命名规则
-1. URL：中划线分词。如：`client-profile-list`，`client-profile-detail`
-2. 文件夹和文件：驼峰分词。如`clientProfileList.js`

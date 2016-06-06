@@ -1,15 +1,21 @@
-import React from 'react'
-// import classes from './layout.styl'
-// import '../../styles/core.scss'
+import React  from 'react'
+import styles from './layout.styl'
 
-const appLayout = ({ children }) => (
-  <div className='appContainer'>
-    { children }
-  </div>
-)
+class appLayout extends React.Component {
+  constructor(props){
+    super(props)
+  }
 
-// CoreLayout.propTypes = {
-//   children: React.PropTypes.element.isRequired
-// }
+  render(){
+    return(<div className={ styles.appContainer }>
+      { this.props.children }
+    </div>)
+  }
+}
+
+
+appLayout.propTypes = {
+  children: React.PropTypes.element.isRequired
+}
 
 export default appLayout

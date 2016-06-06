@@ -1,0 +1,36 @@
+@import '../../assets/styles/common.styl'
+
+.pagenationWrapper
+  margin 15px 0
+  clearfix()
+  .pagination
+    float right
+    clearfix()
+    .pages
+      display inline-block
+      color #666
+      font-size 16px
+      border 1px solid #999
+      margin-left 5px
+      user-select none
+      touch()
+      &.pageUp, &.pageDown
+        color #f60
+        border 1px solid #f60
+        touch()
+        .pageLink
+          display block
+          padding 10px 15px
+      &.break
+        padding 5px 12px
+        border 0
+      &.selected
+        color #fff
+        border-color #f60
+        background-color #f60
+      &.disabled
+        color #c6c6c6
+        border-color #c6c6c6
+      .pageLink
+        display block
+        padding 10px 15px
