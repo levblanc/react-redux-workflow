@@ -1,42 +1,46 @@
 import React              from 'react'
-import { browserHistory } from 'react-router'
 import classNames         from 'classnames/bind'
 import styles             from './tab.styl'
 
-let styleClass = classNames.bind(styles)
+const styleClass = classNames.bind(styles)
 
-let tabSelectors = [
-  { btnText: '现金', type: 0 },
-  { btnText: '枫车快手', type: 1 }
+const tabSelectors = [
+  { btnText: '现金', type: '0' },
+  { btnText: '枫车快手', type: '1' }
 ]
 
 class Tab extends React.Component {
   constructor(props) {
     super(props)
-    this.state = { tabType: 0 }
+    this.state = {
+      currentTab: null
+    }
     this.toogleItem = this.toogleItem.bind(this)
   }
 
-  toogleItem(tabType) {
-    let { tabRedirectUrl } = this.props
-
+  componentWillMount() {
+    const { tabType } = this.props
     this.setState({
-      ...this.state,
-      tabType
+      currentTab: tabType
     })
+  }
 
-    browserHistory.push(`${tabRedirectUrl}/${tabType}`)
+  toogleItem(tabType) {
+    this.setState({
+      currentTab: tabType
+    })
+    this.props.tabCallback(tabType)
   }
 
   render() {
     return (
       <div className={ styles.tabContainer }>
         { tabSelectors.map((tab, index) => {
-          let selectorClass = styleClass({
-            'item'    : true,
-            'selected': this.state.tabType == tab.type
+          const selectorClass = styleClass({
+            item    : true,
+            selected: this.state.currentTab === tab.type
           })
-          let toogleItem = this.toogleItem.bind(this, tab.type)
+          const toogleItem = this.toogleItem.bind(this, tab.type)
           return (
             <div className={ selectorClass } key={ index } onClick={ toogleItem }>
               { tab.btnText }
@@ -49,8 +53,8 @@ class Tab extends React.Component {
 }
 
 Tab.propTypes = {
-  tabType       : React.PropTypes.number,
-  tabRedirectUrl: React.PropTypes.string.isRequired
+  tabType    : React.PropTypes.string.isRequired,
+  tabCallback: React.PropTypes.func.isRequired
 }
 
 export default Tab

@@ -1,18 +1,16 @@
 import React              from 'react'
-import ReactDOM           from 'react-dom'
-import { browserHistory } from 'react-router'
 import { DateRange }      from 'react-date-range'
 import calendarTheme      from './calendarTheme'
 import classNames         from 'classnames/bind'
 import styles             from './dateRange.styl'
 
-let styleClass = classNames.bind(styles)
+const styleClass = classNames.bind(styles)
 
-let dateRangeSelectors = [
-  { btnText: '今天', type: 0 },
-  { btnText: '本周', type: 1 },
-  { btnText: '本月', type: 2 },
-  { btnText: '全部', type: 3 }
+const dateRangeSelectors = [
+  { btnText: '今天', type: '0' },
+  { btnText: '本周', type: '1' },
+  { btnText: '本月', type: '2' },
+  { btnText: '全部', type: '3' }
 ]
 
 class DateRangePicker extends React.Component {
@@ -42,7 +40,7 @@ class DateRangePicker extends React.Component {
   }
 
   toggleRangeSelector(dateRangeType) {
-    let { onSelectRangeType } = this.props
+    const { onSelectRangeType } = this.props
 
     this.setState({
       ...this.state,
@@ -54,8 +52,8 @@ class DateRangePicker extends React.Component {
   }
 
   handleCalendarSelect(range) {
-    let startDate = range.startDate.format('YYYY-MM-DD')
-    let endDate = range.endDate.format('YYYY-MM-DD')
+    const startDate = range.startDate.format('YYYY-MM-DD')
+    const endDate = range.endDate.format('YYYY-MM-DD')
 
     this.setState({
       ...this.state,
@@ -82,42 +80,46 @@ class DateRangePicker extends React.Component {
   }
 
   saveSelectedDates() {
-    let { startDate, endDate } = this.state
-    let { onCalendarSave } = this.props
+    const { startDate, endDate } = this.state
+    const { onCalendarSave } = this.props
 
     this.toggleCalendar()
     onCalendarSave(startDate, endDate)
   }
 
-  render(){
-    let { useCalendar } = this.props
+  render() {
+    const { useCalendar } = this.props
 
     return (
       <div>
         <div className={ styles.dateRangePicker }>
           { dateRangeSelectors.map((selector, index) => {
-
-            let selectorClass = styleClass({
-              'item'       : true,
-              'useCalendar': useCalendar,
-              'selected'   : this.state.currentRangeType == selector.type
+            const selectorClass = styleClass({
+              item       : true,
+              selected   : this.state.currentRangeType === selector.type,
+              useCalendar
             })
 
-            let toggleRangeSelector = this.toggleRangeSelector.bind(this, selector.type)
-
+            const toggleRangeSelector = this.toggleRangeSelector.bind(this, selector.type)
+            /* eslint arrow-body-style: "off" */
             return (
-              <div className={ selectorClass } key={ index }
-                   onClick={ toggleRangeSelector } >
+              <div
+                className={ selectorClass } key={ index }
+                onClick={ toggleRangeSelector }
+              >
                 { selector.btnText }
               </div>
             )
-          })}
+          }) }
           { useCalendar &&
-            <div className={ styleClass({
-                'item'       : true,
-                'useCalendar': useCalendar,
-                'selected'   : this.state.currentRangeType == 'calendar'
-              }) } onClick={ this.toggleCalendar }>
+            <div
+              className={ styleClass({
+                item       : true,
+                selected   : this.state.currentRangeType === 'calendar',
+                useCalendar
+              }) }
+              onClick={ this.toggleCalendar }
+            >
               按日期筛选
             </div>
           }
@@ -128,14 +130,15 @@ class DateRangePicker extends React.Component {
             <div className={ styles.calendarWrapper }>
               <div className={ styles.calendarHeader }>日期选择
                 <div className={ styles.goBackBtn } onClick={ this.calendarBackHandler }></div>
-                <div className={ styles.saveDates }
-                     onClick={ this.saveSelectedDates }>保存</div>
+                <div className={ styles.saveDates } onClick={ this.saveSelectedDates }>保存</div>
               </div>
-              <DateRange onInit={ this.handleCalendarSelect }
-                        theme={ calendarTheme }
-                        firstDayOfWeek={ 0 }
-                        onChange={ this.handleCalendarSelect }
-                        calendars={ 1 } />
+              <DateRange
+                onInit={ this.handleCalendarSelect }
+                theme={ calendarTheme }
+                firstDayOfWeek={ 0 }
+                onChange={ this.handleCalendarSelect }
+                calendars={ 1 }
+              />
             </div>
           </div>
         }

@@ -1,11 +1,8 @@
-import React              from 'react'
-import ReactDOM           from 'react-dom'
-import classNames         from 'classnames/bind'
-import styles             from './selector.styl'
-import Loading            from '../loading/loadingView';
-import LoadingFail        from '../loading/loadingFailView';
+import React      from 'react'
+import classNames from 'classnames/bind'
+import styles     from './selector.styl'
 
-let styleClass = classNames.bind(styles)
+const styleClass = classNames.bind(styles)
 
 class ProductCategorySelector extends React.Component {
   constructor(props) {
@@ -24,7 +21,7 @@ class ProductCategorySelector extends React.Component {
   }
 
   categorySelectHandler(categoryId) {
-    let { onSelect } = this.props
+    const { onSelect } = this.props
 
     this.setState({
       ...this.state,
@@ -35,24 +32,27 @@ class ProductCategorySelector extends React.Component {
   }
 
   render() {
-    let { categoryList } = this.props
+    const { categoryList } = this.props
 
     return (
       <div className={ styles.productType }>
         <div className={ styles.categoryHeader }>商品分类</div>
-        { categoryList.map( (categoryArr, index) => {
+        { categoryList.map((categoryArr, index) => {
+          /* eslint arrow-body-style: "off" */
           return (
             <ul key={ index } className={ styles.categoryRow }>
-              { categoryArr.map( (category, index) => {
-                let categoryClass = styleClass({
-                  'categoryItem': true,
-                  'selected'    : this.state.categoryId == category.type_id
+              { categoryArr.map((category) => {
+                const categoryClass = styleClass({
+                  categoryItem: true,
+                  selected    : this.state.categoryId === category.type_id
                 })
-                let boundClick = this.categorySelectHandler.bind(this, category.type_id)
-                return(
-                  <div key={ category.type_id }
-                      className={ categoryClass }
-                      onClick={ boundClick } >
+                const boundClick = this.categorySelectHandler.bind(this, category.type_id)
+                return (
+                  <div
+                    key={ category.type_id }
+                    className={ categoryClass }
+                    onClick={ boundClick }
+                  >
                     { category.type_name }
                   </div>
                 )

@@ -9,69 +9,63 @@
 // 控制从最后一页起显示倒数多少页，以1为起始
 // ==========================================
 
-import React from 'react'
+import React         from 'react'
 import ReactPaginate from 'react-paginate'
-import classNames from 'classnames/bind'
-import styles from './pagination.styl'
+import classNames    from 'classnames/bind'
+import styles        from './pagination.styl'
 
-let styleClass = classNames.bind(styles)
+const styleClass = classNames.bind(styles)
 
-class Pagination extends React.Component {
-  constructor(props) {
-    super(props)
-  }
+const Pagination = ({ clickCallback, pageNum, currentPage }) => {
+  const pageUpClass = styleClass({
+    pages : true,
+    pageUp: true
+  })
 
-  render() {
-    let { clickCallback, pageNum, currentPage } = this.props
+  const pageDownClass = styleClass({
+    pages   : true,
+    pageDown: true
+  })
 
-    let pageUpClass = styleClass({
-      'pages' : true,
-      'pageUp': true
-    })
+  const activeClass = styleClass({
+    pages   : true,
+    selected: true
+  })
 
-    let pageDownClass = styleClass({
-      'pages'   : true,
-      'pageDown': true
-    })
+  const breakClass = styleClass({
+    pages : true,
+    break : true
+  })
 
-    let activeClass = styleClass({
-      'pages'   : true,
-      'selected': true
-    })
+  const disabledClass = styleClass({
+    pages   : true,
+    disabled: true
+  })
 
-    let breakClass = styleClass({
-      'pages' : true,
-      'break' : true
-    })
-
-    let disabledClass = styleClass({
-      'pages'   : true,
-      'disabled': true
-    })
-
-    return (
-      <div className={ styles.pagenationWrapper }>
-       <ReactPaginate previousLabel={ '上一页' }
-                      nextLabel={ '下一页' }
-                      initialSelected={ 0 }
-                      forceSelected={ currentPage }
-                      pageNum={ pageNum }
-                      clickCallback={ clickCallback }
-                      marginPagesDisplayed={ 1 }
-                      pageRangeDisplayed={ 5 }
-                      containerClassName={ styles.pagination }
-                      pageClassName={ styles.pages }
-                      pageLinkClassName={ styles.pageLink }
-                      previousClassName={ pageUpClass }
-                      previousLinkClassName={ styles.pageLink }
-                      nextClassName={ pageDownClass }
-                      nextLinkClassName={ styles.pageLink }
-                      breakClassName={ breakClass }
-                      activeClassName={ activeClass }
-                      disabledClassName={ disabledClass }/>
-      </div>
-    )
-  }
+  return (
+    <div className={ styles.pagenationWrapper }>
+      <ReactPaginate
+        previousLabel={ '上一页' }
+        nextLabel={ '下一页' }
+        initialSelected={ 0 }
+        forceSelected={ currentPage }
+        pageNum={ pageNum }
+        clickCallback={ clickCallback }
+        marginPagesDisplayed={ 1 }
+        pageRangeDisplayed={ 5 }
+        containerClassName={ styles.pagination }
+        pageClassName={ styles.pages }
+        pageLinkClassName={ styles.pageLink }
+        previousClassName={ pageUpClass }
+        previousLinkClassName={ styles.pageLink }
+        nextClassName={ pageDownClass }
+        nextLinkClassName={ styles.pageLink }
+        breakClassName={ breakClass }
+        activeClassName={ activeClass }
+        disabledClassName={ disabledClass }
+      />
+    </div>
+  )
 }
 
 Pagination.propTypes = {

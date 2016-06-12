@@ -3,6 +3,11 @@ Workflow Changelog
 
 0.1.0
 -----
+@2016-06-09
+- 增加代码规范检测（使用airbnb规范）
+- mockup api和正式数据请求区分，让dev和mockup-dev两个命令可以各自跑起来
+- 增加git的pre-commit hook
+
 @2016-06-06
 - `configs`和`constants`中的文件整理
 - webpack config中alias好所有文件夹路径，在开发时直接引用文件夹名称，不需要再用相对路径

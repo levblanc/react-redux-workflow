@@ -1,6 +1,4 @@
 import React              from 'react'
-import ReactDOM           from 'react-dom'
-import { browserHistory } from 'react-router'
 import styles             from './searchBox.styl'
 
 class SearchBox extends React.Component {
@@ -13,9 +11,9 @@ class SearchBox extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.routeKeyword !== this.props.routeKeyword) {
-      if(nextProps.routeKeyword){
+      if (nextProps.routeKeyword) {
         this.setKeyword(nextProps.routeKeyword)
-      }else{
+      } else {
         this.setKeyword('')
       }
     }
@@ -26,7 +24,7 @@ class SearchBox extends React.Component {
   }
 
   setKeyword(val) {
-    return this.refs.keyword.value = val
+    this.refs.keyword.value = val
   }
 
   keyUpHandler(e) {
@@ -36,7 +34,7 @@ class SearchBox extends React.Component {
   }
 
   searchHandler() {
-    if(this.getKeyword() != '') {
+    if (this.getKeyword() !== '') {
       this.props.onSearch(this.getKeyword())
     } else {
       alert('请输入关键词')
@@ -44,17 +42,21 @@ class SearchBox extends React.Component {
   }
 
   render() {
-    let { routeKeyword, placeholder } = this.props
+    const { routeKeyword, placeholder } = this.props
     return (
       <div className={ styles.searchWrapper }>
         <div className={ styles.searchInner }>
           <label>快速查找：</label>
-          <input type='search' className={ styles.searchInput }
-                  defaultValue={ routeKeyword } ref='keyword'
-                  placeholder={ placeholder }
-                  onKeyUp={ this.keyUpHandler } />
-          <button className={ styles.searchBtn }
-                  onClick={ this.searchHandler }>搜索</button>
+          <input
+            type="search" className={ styles.searchInput }
+            defaultValue={ routeKeyword } ref="keyword"
+            placeholder={ placeholder }
+            onKeyUp={ this.keyUpHandler }
+          />
+          <button
+            className={ styles.searchBtn }
+            onClick={ this.searchHandler }
+          > 搜索 </button>
         </div>
       </div>
     )
@@ -68,5 +70,3 @@ SearchBox.propTypes = {
 }
 
 export default SearchBox
-
-
