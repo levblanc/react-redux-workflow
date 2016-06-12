@@ -4,14 +4,13 @@ import reduxThunk     from 'redux-thunk'
 import initReducers   from 'reduxStore/reducers'
 import reduxLogger    from 'middleware/reduxLogger'
 import ajaxMiddleware from 'middleware/ajaxMiddleware'
-import constants      from 'constants'
 
 
 export default (initialState = {}, history) => {
   // ======================================================
   // 配置Middlewares
   // ======================================================
-  let middlewares = [
+  const middlewares = [
     reduxThunk,
     ajaxMiddleware,
     routerMiddleware(history)
@@ -24,9 +23,9 @@ export default (initialState = {}, history) => {
   // ========================================================
   // 把Redux Developer Tools放到enhancers内
   // ========================================================
-  let enhancers = []
+  const enhancers = []
   if (!__ENV_RELEASE__) {
-    let devToolsExtension = window.devToolsExtension
+    const devToolsExtension = window.devToolsExtension
     if (typeof devToolsExtension === 'function') {
       enhancers.push(devToolsExtension())
     }
@@ -35,7 +34,7 @@ export default (initialState = {}, history) => {
   // ======================================================
   // 初始化redux store
   // ======================================================
-  let reduxStore = createStore(
+  const reduxStore = createStore(
     initReducers(),
     initialState,
     compose(
@@ -50,8 +49,7 @@ export default (initialState = {}, history) => {
   // ======================================================
   if (module.hot) {
     module.hot.accept('./reducers', () => {
-      let reducers = require('./reducers').default
-      reduxStore.replaceReducer(reducers)
+      reduxStore.replaceReducer(initReducers)
     })
   }
 

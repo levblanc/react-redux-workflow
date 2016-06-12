@@ -6,14 +6,10 @@ import * as mockupApis from 'apiMock/index'
 mocker(superagent)
 
 const mockupReq = (method, api) => {
-  let targetPath = `${constants.SERVER_URI}/mockup-api/${api}`
-  let apiArr = api.split('/')
+  const targetPath = `${constants.SERVER_URI}/mockup-api/${api}`
+  const apiArr = api.split('/')
 
-  mocker[method](targetPath, req => {
-    return mockupApis[apiArr[0]][apiArr[1]]
-  })
+  mocker[method](targetPath, () => mockupApis[apiArr[0]][apiArr[1]])
 }
 
 export default mockupReq
-
-

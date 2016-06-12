@@ -1,16 +1,19 @@
 import { combineReducers } from 'redux'
 import { routerReducer } from 'react-router-redux'
 
-export const initReducers = (asyncReducers) => {
-  return combineReducers({
-    // 添加同步的reducers
-    router: routerReducer,
-    ...asyncReducers
-  })
-}
+export const initReducers = (asyncReducers) => combineReducers({
+  router: routerReducer,
+  ... asyncReducers
+})
 
 export const injectReducer = (store, { key, reducer }) => {
-  store.asyncReducers[key] = reducer
+  const asyncReducerObj = {}
+  asyncReducerObj[key] = reducer
+
+  Object.assign(store, {
+    asyncReducers: asyncReducerObj
+  })
+
   store.replaceReducer(initReducers(store.asyncReducers))
 }
 

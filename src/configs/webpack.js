@@ -6,19 +6,20 @@ import _debug              from 'debug'
 import path                from 'path'
 import webpack             from 'webpack'
 import constants           from '../constants/globalConsts'
+import nib from 'nib'
+import poststylus          from 'poststylus'
 import HtmlWebpackPlugin   from 'html-webpack-plugin'
 import ExtractTextPlugin   from 'extract-text-webpack-plugin'
 import CleanPlugin         from 'clean-webpack-plugin'
-import CompressionPlugin   from 'compression-webpack-plugin'
 import ChunkManifestPlugin from 'chunk-manifest-webpack-plugin'
-import poststylus          from 'poststylus'
+// import CompressionPlugin   from 'compression-webpack-plugin'
 
-let debug       = _debug('app:webpack:config')
-let { __DEV__ } = constants.WEBPACK_DEFINE
+const debug       = _debug('app:webpack:config')
+const { __DEV__ } = constants.WEBPACK_DEFINE
 
 debug('装填webpack配置')
 
-let webpackConfig = {
+const webpackConfig = {
   context : constants.DIR_ROOT,
   progress: true,
   resolve : {
@@ -52,10 +53,10 @@ const APP_ENTRY_FILES = [
 ]
 
 webpackConfig.entry = {
-    app: __DEV__
-          ? APP_ENTRY_FILES.concat(`webpack-hot-middleware/client?path=${constants.SERVER_URI}/__webpack_hmr`)
-          : APP_ENTRY_FILES,
-    vendors: constants.COMPILER_VENDORS
+  app: __DEV__
+        ? APP_ENTRY_FILES.concat(`webpack-hot-middleware/client?path=${constants.SERVER_URI}/__webpack_hmr`)
+        : APP_ENTRY_FILES,
+  vendors: constants.COMPILER_VENDORS
 }
 
 
@@ -63,14 +64,14 @@ webpackConfig.entry = {
 // 打包Output配置
 // ======================================
 webpackConfig.output = {
-    path         : constants.DIR_DIST,
-    filename     : '[name].[hash:6].js',
-    chunkFilename: '[name].[chunkhash:6].js',
-    publicPath   : constants.COMPILER_SETTINGS.publicPath
+  path         : constants.DIR_DIST,
+  filename     : '[name].[hash:6].js',
+  chunkFilename: '[name].[chunkhash:6].js',
+  publicPath   : constants.COMPILER_SETTINGS.publicPath
 }
 
 // dev tool(sourcemap) 只在 alpha 和 test 环境开启
-if(constants.COMPILER_DEVTOOL){
+if (constants.COMPILER_DEVTOOL) {
   webpackConfig.devtool = constants.COMPILER_DEVTOOL
 }
 
@@ -99,7 +100,7 @@ webpackConfig.module.loaders = [
 ]
 
 // CSS loader
-let cssModulesLoader = [
+const cssModulesLoader = [
   'css?sourceMap',
   'modules',
   'localIdentName=[local]___[hash:base64:5]'
@@ -115,13 +116,15 @@ webpackConfig.module.loaders.push({
 })
 
 // 在production环境中使用ExtractTextPlugin
-if(!__DEV__){
+if (!__DEV__) {
   debug('使用CSS ExtractTextPlugin')
   webpackConfig.module.loaders.filter((loader) =>
     loader.loaders && loader.loaders.find((name) => /css/.test(name.split('?')[0]))
   ).forEach((loader) => {
     const [first, ...rest] = loader.loaders
-    loader.loader = ExtractTextPlugin.extract(first, rest.join('!'))
+    Object.assign(loader, {
+      loader: ExtractTextPlugin.extract(first, rest.join('!'))
+    })
     Reflect.deleteProperty(loader, 'loaders')
   })
 }
@@ -129,8 +132,8 @@ if(!__DEV__){
 // 使用stylus nib插件
 webpackConfig.stylus = {
   use: [
-    require('nib')(),
-    poststylus([ 'autoprefixer' ])
+    nib(),
+    poststylus(['autoprefixer'])
   ],
   import: ['~nib/lib/nib/index.styl']
 }
@@ -147,7 +150,7 @@ webpackConfig.plugins = [
   })
 ]
 
-let htmlPluginConfigs = {
+const htmlPluginConfigs = {
   template: path.resolve(constants.DIR_SRC, 'index.html.js'),
   hash    : false,
   filename: 'index.html',
@@ -155,7 +158,7 @@ let htmlPluginConfigs = {
 }
 
 
-if(__DEV__){
+if (__DEV__) {
   debug('使用开发环境webpack插件(HMR, NoErrors)')
   webpackConfig.plugins.push(
     new HtmlWebpackPlugin(htmlPluginConfigs),
@@ -163,10 +166,10 @@ if(__DEV__){
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoErrorsPlugin()
   )
-}else{
+} else {
   debug('使用release环境webpack插件(Dedupe, OccurenceOrder, CommonsChunk, UglifyJS)')
 
-  let compressConfigs = {
+  const compressConfigs = {
     compress: {
       warnings : false
     }
@@ -176,7 +179,7 @@ if(__DEV__){
     collapseWhitespace: true
   }
 
-  if(constants.COMPILE_ENV === 'release'){
+  if (constants.COMPILE_ENV === 'release') {
     debug('使用release环境JS压缩配置：unused && dead_code')
     compressConfigs.compress = {
       ...compressConfigs.compress,
@@ -208,7 +211,7 @@ if(__DEV__){
       minChunks: 3
     }),
     // 压缩JS
-    new webpack.optimize.UglifyJsPlugin(compressConfigs),
+    new webpack.optimize.UglifyJsPlugin(compressConfigs)
     // 预压缩gzip文件，服务器请求css, js时马上提供对应的压缩文件
     // !!! 注意：服务器端需做对应配置 !!!
     // new CompressionPlugin({

@@ -58,7 +58,7 @@ export default class PaginationBoxView extends Component {
   componentDidMount() {
     // Call the callback with the initialSelected item:
     if (typeof(this.props.initialSelected) !== 'undefined') {
-      this.callCallback(this.props.initialSelected);
+      // this.callCallback(this.props.initialSelected);
     }
   }
 

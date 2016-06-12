@@ -1,16 +1,23 @@
 import globalConfig from '../configs/global'
 
-let { routeBasePath } = globalConfig
+const { routeBasePath } = globalConfig
 
 const routeObjParser = (routeObj) => {
-  let targetRoute = [`${routeBasePath}${routeObj.path}`]
-  let { childRoutes } = routeObj
+  const baseRoute = `${routeBasePath}${routeObj.path}`
+  const { childRoutes } = routeObj
+  let finalRoute = ''
 
-  Object.keys(childRoutes).forEach((key, index, arr) => {
-    targetRoute.push(`${key}/${ childRoutes[key] }`)
-  })
+  if (childRoutes) {
+    const routeArr = [baseRoute]
+    Object.keys(childRoutes).forEach((key) => {
+      routeArr.push(`${key}/${childRoutes[key]}`)
+    })
+    finalRoute = routeArr.join('/')
+  } else {
+    finalRoute = baseRoute
+  }
 
-  return targetRoute.join('/')
+  return finalRoute
 }
 
 export default routeObjParser

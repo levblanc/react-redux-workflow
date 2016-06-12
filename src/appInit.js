@@ -4,9 +4,11 @@ import { Provider }               from 'react-redux'
 import { Router, browserHistory } from 'react-router'
 import { syncHistoryWithStore }   from 'react-router-redux'
 import createReduxStore           from 'reduxStore/createStore'
+import appRoutes                  from 'routes/appRoutes'
+import RedBox                     from 'redbox-react'
 
-let store = createReduxStore({}, browserHistory)
-let history = syncHistoryWithStore(browserHistory, store, {
+const store = createReduxStore({}, browserHistory)
+const history = syncHistoryWithStore(browserHistory, store, {
   selectLocationState: (state) => state.router
 })
 
@@ -15,12 +17,12 @@ let history = syncHistoryWithStore(browserHistory, store, {
 // ========================================================
 const ROOT_NODE = document.getElementById('root')
 
-let appInit = (routerKey = null) => {
-  const routes = require('routes/appRoutes').default(store)
+const appInit = (routerKey = null) => {
+  const routes = appRoutes(store)
 
   ReactDOM.render(
-    <Provider store={store}>
-      <Router history={history} children={routes} key={routerKey} />
+    <Provider store={ store }>
+      <Router history={ history } children={ routes } key={ routerKey } />
     </Provider>,
     ROOT_NODE
   )
@@ -30,13 +32,11 @@ let appInit = (routerKey = null) => {
 // 使用HMR进行页面自动reload
 // 使用RedBox捕捉并显示错误信息
 if (__DEV__ && module.hot) {
-  let renderApp = appInit
-  let renderError = (error) => {
-    let RedBox = require('redbox-react')
-
-    ReactDOM.render(<RedBox error={error} />, ROOT_NODE)
+  const renderApp = appInit
+  const renderError = (error) => {
+    ReactDOM.render(<RedBox error={ error } />, ROOT_NODE)
   }
-  let render = () => {
+  const render = () => {
     try {
       renderApp(Math.random())
     } catch (error) {

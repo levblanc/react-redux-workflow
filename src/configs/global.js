@@ -4,15 +4,20 @@ import constants from 'constants'
 // API host配置
 // ======================================
 const getApiPrefix = () => {
-  if(constants.FORCE_API){
-    return constants[constants.FORCE_API].apiPrefix
-  }else if(__ENV_ALPHA__){
-    return constants.ENV_ALPHA.apiPrefix
-  }else if(__ENV_BETA__){
-    return constants.ENV_BETA.apiPrefix
-  }else if(__ENV_RELEASE__){
-    return constants.ENV_RELEASE.apiPrefix
+  let apiPrefix = ''
+  if (constants.FORCE_API) {
+    apiPrefix = constants[constants.FORCE_API].apiPrefix
+  } else if (__ENV_ALPHA__) {
+    apiPrefix = constants.ENV_ALPHA.apiPrefix
+  } else if (__ENV_BETA__) {
+    apiPrefix = constants.ENV_BETA.apiPrefix
+  } else if (__ENV_RELEASE__) {
+    apiPrefix = constants.ENV_RELEASE.apiPrefix
+  } else {
+    apiPrefix = constants.ENV_ALPHA.apiPrefix
   }
+
+  return apiPrefix
 }
 
 // ======================================
@@ -21,11 +26,13 @@ const getApiPrefix = () => {
 const getRouteBasePath = () => {
   let routeBasePath = ''
 
-  if(__ENV_ALPHA__){
-    return routeBasePath = '/ssms/'
-  }else{
-    return routeBasePath = '/'
+  if (__ENV_ALPHA__) {
+    routeBasePath = '/ssms/'
+  } else {
+    routeBasePath = '/'
   }
+
+  return routeBasePath
 }
 
 

@@ -9,35 +9,33 @@ import {  FETCH_CATEGORY,
 // Actions
 // ============================
 // 加载商品类型列表
-export const fetchCategory = () => {
-  return {
-    types: [
-      FETCH_CATEGORY,
-      FETCH_CATEGORY_SUCCESS,
-      FETCH_CATEGORY_ERROR,
-    ],
-    requestApi: 'inventoryStats/category'
-  }
-}
+export const fetchCategory = () => ({
+  types: [
+    FETCH_CATEGORY,
+    FETCH_CATEGORY_SUCCESS,
+    FETCH_CATEGORY_ERROR,
+  ],
+  mockupApi: 'inventoryStats/category'
+})
+
 
 // 选中一个商品类型，加载它的库存列表
 // 或
 // 输入关键词，搜索已选中的商品类型下对应的库存
-export const fetchInventory = (categoryId, keyword = '', page) => {
-  return {
-    types: [
-      FETCH_INVENTORY,
-      FETCH_INVENTORY_SUCCESS,
-      FETCH_INVENTORY_ERROR
-    ],
-    requestApi: 'inventoryStats/inventory',
-    reqParams: {
-      category_id: categoryId,
-      page_num: 10,
-      keyword, page
-    }
+export const fetchInventory = (categoryId, keyword = '', page) => ({
+  types: [
+    FETCH_INVENTORY,
+    FETCH_INVENTORY_SUCCESS,
+    FETCH_INVENTORY_ERROR
+  ],
+  mockupApi: 'inventoryStats/inventory',
+  reqParams: {
+    category_id: categoryId,
+    page_num: 10,
+    keyword, page
   }
-}
+})
+
 
 const initialState = {
   categoryReady: false,
@@ -57,6 +55,9 @@ const initialState = {
 // Reducer
 // ============================
 const inventoryStatsReducer = (state = initialState, action) => {
+  const categoryData = []
+  let tmpArr = null
+
   switch (action.type) {
     case FETCH_CATEGORY:
       return {
@@ -66,17 +67,14 @@ const inventoryStatsReducer = (state = initialState, action) => {
     case FETCH_CATEGORY_SUCCESS:
       // 把数据整理成二维数组，每六个category放到一个小数组里面
       // 方便在页面中使用的时候循环成六个一行
-      let categoryData = []
-      let tmpArr = null
-
       action.resData.forEach((category, index, array) => {
-        if(index % 6 === 0){
+        if (index % 6 === 0) {
           tmpArr = []
           tmpArr.push(category)
-        } else if ( (index % 6 === 5) || (index === array.length - 1) ) {
+        } else if ((index % 6 === 5) || (index === array.length - 1)) {
           tmpArr.push(category)
           categoryData.push(tmpArr)
-        }else{
+        } else {
           tmpArr.push(category)
         }
       })

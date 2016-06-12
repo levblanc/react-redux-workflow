@@ -12,25 +12,25 @@ import webpackConfig        from '../src/configs/webpack'
 import constants            from '../src/constants/globalConsts'
 import argv                 from 'minimist-argv'
 
-let debug = _debug('app:server:init')
-let app   = express()
+const debug = _debug('app:server:init')
+const app   = express()
 
-let isDevelopment = ( constants.NODE_ENV !== 'release' &&
-                      constants.NODE_ENV !== 'mockup-release' )
+const isDevelopment = (constants.NODE_ENV !== 'release' &&
+                      constants.NODE_ENV !== 'mockup-release')
 
 debug('server启动中……')
 
-if(isDevelopment){
+if (isDevelopment) {
   debug('server读取开发环境配置')
 
-  if( constants.NODE_ENV === 'mockup-dev' ){
+  if (constants.NODE_ENV === 'mockup-dev') {
     debug('将使用Mockup Api进行开发')
-  }else{
+  } else {
     debug('将使用206数据进行开发')
   }
 
-  let compiler = webpack(webpackConfig)
-  let devMiddleware = webpackDevMiddleware(compiler, constants.COMPILER_SETTINGS)
+  const compiler = webpack(webpackConfig)
+  const devMiddleware = webpackDevMiddleware(compiler, constants.COMPILER_SETTINGS)
 
   // !!! historyApiFallback !!!
   // 一定要在 devMiddleware 前使用
@@ -47,37 +47,37 @@ if(isDevelopment){
   // app.get('*', (req, res) => {
   //   res.sendFile(path.join(constants.TARGET_FILE_DIR, 'index.html'));
   // });
-}else{
+} else {
   debug('server读取生产环境配置')
 
-  if( constants.NODE_ENV === 'mockup-release' ){
+  if (constants.NODE_ENV === 'mockup-release') {
     debug('将使用Mockup Api')
   }
 
   app.use(express.static(constants.TARGET_FILE_DIR))
 
-  if(argv.env === 'alpha'){
+  if (argv.env === 'alpha') {
     debug('路由根目录为/ssms/')
     app.get('/ssms/*', (req, res) => {
-      let urlArr = req.url.split('/')
-      if(urlArr.length > 3){
+      const urlArr = req.url.split('/')
+      if (urlArr.length > 3) {
         res.sendFile(path.join(constants.TARGET_FILE_DIR, 'index.html'))
-      }else{
-        let targetFileName = urlArr[2]
+      } else {
+        const targetFileName = urlArr[2]
         res.sendFile(path.join(constants.TARGET_FILE_DIR, targetFileName))
       }
     })
-  }else{
+  } else {
     debug('路由根目录为/')
     app.get('*', (req, res) => {
-      res.sendFile(path.join(constants.TARGET_FILE_DIR, 'index.html'));
+      res.sendFile(path.join(constants.TARGET_FILE_DIR, 'index.html'))
     })
   }
 }
 
 app.listen(constants.SERVER_PORT, (err) => {
-  if(err) console.error('SERVER ERROR: ' + err)
+  if (err) console.error(`SERVER ERROR: ${err}`)
   debug(`server正从 ${constants.TARGET_FILE_DIR} 文件夹读取文件`)
   debug(`server@${constants.SERVER_URI}已启动`)
-});
+})
 
