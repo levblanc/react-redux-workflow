@@ -14,10 +14,8 @@ import inventoryStatsView from './statsView'
 const stateMapper = ({ inventoryStats }) => ({ ...inventoryStats })
 
 const actionMapper = (dispatch) => ({
-  fetchCategory: () => dispatch(fetchCategory()),
-  fetchInventory: (categoryId, keyword, page) => {
-    dispatch(fetchInventory(categoryId, keyword, page))
-  }
+  fetchCategory: (reqParams) => dispatch(fetchCategory(reqParams)),
+  fetchInventory: (reqParams) => dispatch(fetchInventory(reqParams))
 })
 
 export default connect(stateMapper, actionMapper)(inventoryStatsView)

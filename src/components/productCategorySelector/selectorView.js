@@ -13,15 +13,30 @@ class ProductCategorySelector extends React.Component {
     this.categorySelectHandler = this.categorySelectHandler.bind(this)
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillMount() {
     this.setState({
       ...this.state,
-      categoryId: nextProps.categoryId
+      categoryId: this.props.categoryId
     })
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { categoryId } = this.props
+
+    if (nextProps.categoryId !== categoryId) {
+      this.setState({
+        ...this.state,
+        categoryId: nextProps.categoryId
+      })
+    }
   }
 
   categorySelectHandler(categoryId) {
     const { onSelect } = this.props
+
+    if (this.state.categoryId === categoryId) {
+      return
+    }
 
     this.setState({
       ...this.state,
@@ -44,16 +59,16 @@ class ProductCategorySelector extends React.Component {
               { categoryArr.map((category) => {
                 const categoryClass = styleClass({
                   categoryItem: true,
-                  selected    : this.state.categoryId === category.type_id
+                  selected    : this.state.categoryId === category.id
                 })
-                const boundClick = this.categorySelectHandler.bind(this, category.type_id)
+                const boundClick = this.categorySelectHandler.bind(this, category.id)
                 return (
                   <div
-                    key={ category.type_id }
+                    key={ category.id }
                     className={ categoryClass }
                     onClick={ boundClick }
                   >
-                    { category.type_name }
+                    { category.name }
                   </div>
                 )
               }) }

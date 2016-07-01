@@ -18,7 +18,7 @@ const homeView = () => (
         <Link to={ '/inventory-stats' } className={ styles.reduxColor }>inventoryStats</Link>
       </li>
       <li>
-        <Link to={ '/inventory-manage-out-list' } className={ styles.reduxColor }>inventoryManageOutList</Link>
+        <Link to={ '/inventory-out-stock' } className={ styles.reduxColor }>inventoryManageOutList</Link>
       </li>
       <li>
         <Link to={ '/inventory-in-stock' } className={ styles.reduxColor }>inventoryInStock</Link>

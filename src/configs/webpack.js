@@ -15,7 +15,7 @@ import ChunkManifestPlugin from 'chunk-manifest-webpack-plugin'
 // import CompressionPlugin   from 'compression-webpack-plugin'
 
 const debug       = _debug('app:webpack:config')
-const { __DEV__ } = constants.WEBPACK_DEFINE
+const { __DEV__, __TEST__ } = constants.WEBPACK_DEFINE
 
 debug('装填webpack配置')
 
@@ -24,21 +24,23 @@ const webpackConfig = {
   progress: true,
   resolve : {
     alias: {
-      api          : path.resolve(constants.DIR_SRC, 'api'),
-      apiMock      : path.resolve(constants.DIR_SRC, 'apiMock'),
-      assets       : path.resolve(constants.DIR_SRC, 'assets'),
-      components   : path.resolve(constants.DIR_SRC, 'components'),
-      globalConfig : path.resolve(constants.DIR_SRC, 'configs/global.js'),
-      constants    : path.resolve(constants.DIR_SRC, 'constants/globalConsts.js'),
-      actionTypes  : path.resolve(constants.DIR_SRC, 'constants/actionTypes.js'),
-      containers   : path.resolve(constants.DIR_SRC, 'containers'),
-      layout       : path.resolve(constants.DIR_SRC, 'layout'),
-      middleware   : path.resolve(constants.DIR_SRC, 'middleware'),
-      reduxStore   : path.resolve(constants.DIR_SRC, 'reduxStore'),
-      routes       : path.resolve(constants.DIR_SRC, 'routes'),
-      utils        : path.resolve(constants.DIR_SRC, 'utils')
+      api         : path.resolve(constants.DIR_SRC, 'api'),
+      apiMock     : path.resolve(constants.DIR_SRC, 'apiMock'),
+      assets      : path.resolve(constants.DIR_SRC, 'assets'),
+      components  : path.resolve(constants.DIR_SRC, 'components'),
+      globalConfig: path.resolve(constants.DIR_SRC, 'configs/global.js'),
+      constants   : path.resolve(constants.DIR_SRC, 'constants/globalConsts.js'),
+      actionTypes : path.resolve(constants.DIR_SRC, 'constants/actionTypes.js'),
+      containers  : path.resolve(constants.DIR_SRC, 'containers'),
+      layout      : path.resolve(constants.DIR_SRC, 'layout'),
+      middleware  : path.resolve(constants.DIR_SRC, 'middleware'),
+      reduxStore  : path.resolve(constants.DIR_SRC, 'reduxStore'),
+      routes      : path.resolve(constants.DIR_SRC, 'routes'),
+      utils       : path.resolve(constants.DIR_SRC, 'utils'),
+      testUtils   : path.resolve(constants.DIR_TEST, 'utils')
     },
-    extensions: ['', '.json', '.js']
+    modulesDirectories: ['node_modules'],
+    extensions: ['', '.js', '.json']
   },
 
   module: {}
@@ -82,12 +84,17 @@ if (constants.COMPILER_DEVTOOL) {
 webpackConfig.module.loaders = [
   {
     test: /\.(js|jsx)$/,
-    exclude: /node_modules/,
+    exclude: /(node_modules)/,
     loader: 'babel-loader',
     query: {
       cacheDirectory: true,
       plugins: ['transform-runtime'],
-      presets: ['es2015', 'react', 'stage-0']
+      presets: ['es2015', 'react', 'stage-0', 'airbnb']
+    },
+    env: {
+      production: {
+        presets: ['react-optimize']
+      }
     }
   },
   { test: /\.json$/,
@@ -115,8 +122,8 @@ webpackConfig.module.loaders.push({
   ]
 })
 
-// 在production环境中使用ExtractTextPlugin
-if (!__DEV__) {
+// 在 release 环境中使用ExtractTextPlugin
+if (!__DEV__ && !__TEST__) {
   debug('使用CSS ExtractTextPlugin')
   webpackConfig.module.loaders.filter((loader) =>
     loader.loaders && loader.loaders.find((name) => /css/.test(name.split('?')[0]))
@@ -150,6 +157,7 @@ webpackConfig.plugins = [
   })
 ]
 
+// HtmlWebpackPlugin 基本配置
 const htmlPluginConfigs = {
   template: path.resolve(constants.DIR_SRC, 'index.html.js'),
   hash    : false,
@@ -157,16 +165,16 @@ const htmlPluginConfigs = {
   inject  : 'body'
 }
 
-
 if (__DEV__) {
   debug('使用开发环境webpack插件(HMR, NoErrors)')
   webpackConfig.plugins.push(
     new HtmlWebpackPlugin(htmlPluginConfigs),
-    // hot reload
+    // Hot Reload
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoErrorsPlugin()
   )
-} else {
+} else if (!__TEST__) {
+  // 非本地开发环境 && 非测试环境 => 线上环境
   debug('使用release环境webpack插件(Dedupe, OccurenceOrder, CommonsChunk, UglifyJS)')
 
   const compressConfigs = {
@@ -175,6 +183,7 @@ if (__DEV__) {
     }
   }
 
+  // 对 HtmlWebpackPlugin 最后生成的 index.html 进行压缩
   htmlPluginConfigs.minify = {
     collapseWhitespace: true
   }

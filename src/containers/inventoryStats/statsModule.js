@@ -9,51 +9,60 @@ import {  FETCH_CATEGORY,
 // Actions
 // ============================
 // 加载商品类型列表
-export const fetchCategory = () => ({
+export const fetchCategory = ({ storeId }) => ({
   types: [
     FETCH_CATEGORY,
     FETCH_CATEGORY_SUCCESS,
     FETCH_CATEGORY_ERROR,
   ],
-  mockupApi: 'inventoryStats/category'
+  reqApiKey: 'inventoryCategory',
+  mockupApi: 'inventoryStats/category',
+  reqParams: {
+    sstore_id: storeId
+  }
 })
 
 
 // 选中一个商品类型，加载它的库存列表
 // 或
 // 输入关键词，搜索已选中的商品类型下对应的库存
-export const fetchInventory = (categoryId, keyword = '', page) => ({
+export const fetchInventory = ({ storeId, categoryId, keyword = '', page }) => ({
   types: [
     FETCH_INVENTORY,
     FETCH_INVENTORY_SUCCESS,
     FETCH_INVENTORY_ERROR
   ],
+  reqApiKey: 'inventoryStats',
   mockupApi: 'inventoryStats/inventory',
   reqParams: {
-    category_id: categoryId,
-    page_num: 10,
-    keyword, page
+    sstore_id   : storeId,
+    type_id     : categoryId,
+    page_size   : 10,
+    product_name: keyword,
+    page
   }
 })
 
 
-const initialState = {
-  categoryReady: false,
-  categoryError: false,
-  categoryList : [],
-  categoryId   : null,
+// ============================
+// Reducer
+// ============================
 
-  inventoryReady: false,
-  inventoryError: false,
-  inventoryList : [],
+const initialState = {
+  categoryLoading: false,
+  categoryError  : false,
+  categoryErrMsg : null,
+  categoryList   : null,
+
+  inventoryLoading: false,
+  inventoryError  : false,
+  inventoryErrMsg : null,
+  inventoryData   : null,
 
   page   : 1,
   keyword: ''
 }
 
-// ============================
-// Reducer
-// ============================
 const inventoryStatsReducer = (state = initialState, action) => {
   const categoryData = []
   let tmpArr = null
@@ -62,56 +71,64 @@ const inventoryStatsReducer = (state = initialState, action) => {
     case FETCH_CATEGORY:
       return {
         ...state,
-        categoryReady: false
+        categoryLoading: true,
+        categoryError  : false,
+        categoryErrMsg : null,
+        categoryList   : null
       }
     case FETCH_CATEGORY_SUCCESS:
       // 把数据整理成二维数组，每六个category放到一个小数组里面
-      // 方便在页面中使用的时候循环成六个一行
-      action.resData.forEach((category, index, array) => {
-        if (index % 6 === 0) {
-          tmpArr = []
-          tmpArr.push(category)
-        } else if ((index % 6 === 5) || (index === array.length - 1)) {
-          tmpArr.push(category)
+      // 方便在页面中使用的时候循环成每六个一行
+      action.resData.type_list.forEach((category, index, array) => {
+        index % 6 === 0 && (tmpArr = [])
+
+        tmpArr.push(category)
+
+        if (index % 6 === 5 || index === array.length - 1) {
           categoryData.push(tmpArr)
-        } else {
-          tmpArr.push(category)
         }
       })
 
       return {
         ...state,
-        categoryReady: true,
-        categoryError: false,
-        categoryList : categoryData
+        categoryLoading: false,
+        categoryError  : false,
+        categoryErrMsg : null,
+        categoryList   : categoryData
       }
     case FETCH_CATEGORY_ERROR:
       return {
         ...state,
-        categoryReady: true,
-        categoryError: true
+        categoryLoading: false,
+        categoryError  : true,
+        categoryErrMsg : action.err,
+        categoryList   : null
       }
     case FETCH_INVENTORY:
       return {
         ...state,
-        page          : action.reqParams.page,
-        inventoryReady: false
+        inventoryLoading: true,
+        inventoryError  : false,
+        inventoryErrMsg : null,
+        inventoryData   : null
       }
     case FETCH_INVENTORY_SUCCESS:
       return {
         ...state,
-        page          : action.reqParams.page,
-        inventoryReady: true,
-        inventoryError: false,
-        inventoryList : action.resData
+        inventoryLoading: false,
+        inventoryError  : false,
+        inventoryErrMsg : null,
+        inventoryData   : action.resData,
+        page            : action.reqParams.page
       }
     case FETCH_INVENTORY_ERROR:
       return {
         ...state,
-        categoryId    : action.reqParams.category_id,
-        page          : action.reqParams.page,
-        inventoryReady: true,
-        inventoryError: true
+        inventoryLoading: false,
+        inventoryError  : true,
+        inventoryErrMsg : action.err,
+        inventoryData   : null,
+        page            : action.reqParams.page
       }
     default:
       return state

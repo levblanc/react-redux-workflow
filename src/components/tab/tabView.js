@@ -4,17 +4,13 @@ import styles             from './tab.styl'
 
 const styleClass = classNames.bind(styles)
 
-const tabSelectors = [
-  { btnText: '现金', type: '0' },
-  { btnText: '枫车快手', type: '1' }
-]
-
 class Tab extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       currentTab: null
     }
+
     this.toogleItem = this.toogleItem.bind(this)
   }
 
@@ -25,6 +21,17 @@ class Tab extends React.Component {
     })
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { tabType } = this.props
+
+    if (nextProps.tabType !== tabType) {
+      this.setState({
+        ...this.state,
+        currentTab: nextProps.tabType
+      })
+    }
+  }
+
   toogleItem(tabType) {
     this.setState({
       currentTab: tabType
@@ -33,6 +40,10 @@ class Tab extends React.Component {
   }
 
   render() {
+    const tabSelectors = [
+      { btnText: '现金', type: '0' },
+      { btnText: '枫车快手', type: '1' }
+    ]
     return (
       <div className={ styles.tabContainer }>
         { tabSelectors.map((tab, index) => {

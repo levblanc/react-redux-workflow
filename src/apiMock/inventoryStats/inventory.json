@@ -1,45 +1,48 @@
 {
   "errcode": 0,
-  "data": [
-    {
-      "barcode"     : "4653565461",
-      "product_id"  : "1",
-      "product_name": "商品名称",
-      "product_unit": "条",
-      "stock"       : "400",
-      "memo"        : "建议"
-    },
-    {
-      "barcode"     : "4653565462",
-      "product_id"  : "2",
-      "product_name": "商品名称",
-      "product_unit": "条",
-      "stock"       : "450",
-      "memo"        : "建议"
-    },
-    {
-      "barcode"     : "4653565463",
-      "product_id"  : "3",
-      "product_name": "商品名称",
-      "product_unit": "条",
-      "stock"       : "340",
-      "memo"        : "建议"
-    },
-    {
-      "barcode"     : "4653565462",
-      "product_id"  : "2",
-      "product_name": "商品名称",
-      "product_unit": "条",
-      "stock"       : "450",
-      "memo"        : "建议"
-    },
-    {
-      "barcode"     : "4653565463",
-      "product_id"  : "3",
-      "product_name": "商品名称",
-      "product_unit": "条",
-      "stock"       : "340",
-      "memo"        : "建议"
-    }
-  ]
+  "data": {
+    "page_count": 10,
+    "product_list": [
+      {
+        "barcode"     : "4653565461",
+        "product_id"  : "1",
+        "product_name": "商品名称",
+        "product_unit": "条",
+        "stock"       : "400",
+        "memo"        : "建议"
+      },
+      {
+        "barcode"     : "4653565462",
+        "product_id"  : "2",
+        "product_name": "商品名称",
+        "product_unit": "条",
+        "stock"       : "450",
+        "memo"        : "建议"
+      },
+      {
+        "barcode"     : "4653565463",
+        "product_id"  : "3",
+        "product_name": "商品名称",
+        "product_unit": "条",
+        "stock"       : "340",
+        "memo"        : "建议"
+      },
+      {
+        "barcode"     : "4653565462",
+        "product_id"  : "2",
+        "product_name": "商品名称",
+        "product_unit": "条",
+        "stock"       : "450",
+        "memo"        : "建议"
+      },
+      {
+        "barcode"     : "4653565463",
+        "product_id"  : "3",
+        "product_name": "商品名称",
+        "product_unit": "条",
+        "stock"       : "340",
+        "memo"        : "建议"
+      }
+    ]
+  }
 }

@@ -12,7 +12,7 @@ export default (initialState = {}, history) => {
   // ======================================================
   const middlewares = [
     reduxThunk,
-    ajaxMiddleware,
+    ajaxMiddleware(),
     routerMiddleware(history)
   ]
 

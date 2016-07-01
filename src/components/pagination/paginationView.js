@@ -43,27 +43,31 @@ const Pagination = ({ clickCallback, pageNum, currentPage }) => {
   })
 
   return (
-    <div className={ styles.pagenationWrapper }>
-      <ReactPaginate
-        previousLabel={ '上一页' }
-        nextLabel={ '下一页' }
-        initialSelected={ 0 }
-        forceSelected={ currentPage }
-        pageNum={ pageNum }
-        clickCallback={ clickCallback }
-        marginPagesDisplayed={ 1 }
-        pageRangeDisplayed={ 5 }
-        containerClassName={ styles.pagination }
-        pageClassName={ styles.pages }
-        pageLinkClassName={ styles.pageLink }
-        previousClassName={ pageUpClass }
-        previousLinkClassName={ styles.pageLink }
-        nextClassName={ pageDownClass }
-        nextLinkClassName={ styles.pageLink }
-        breakClassName={ breakClass }
-        activeClassName={ activeClass }
-        disabledClassName={ disabledClass }
-      />
+    <div>
+    { pageNum > 1 &&
+      <div className={ styles.pagenationWrapper }>
+        <ReactPaginate
+          previousLabel={ '上一页' }
+          nextLabel={ '下一页' }
+          initialSelected={ 0 }
+          forceSelected={ currentPage }
+          pageNum={ pageNum }
+          clickCallback={ clickCallback }
+          marginPagesDisplayed={ 1 }
+          pageRangeDisplayed={ 5 }
+          containerClassName={ styles.pagination }
+          pageClassName={ styles.pages }
+          pageLinkClassName={ styles.pageLink }
+          previousClassName={ pageUpClass }
+          previousLinkClassName={ styles.pageLink }
+          nextClassName={ pageDownClass }
+          nextLinkClassName={ styles.pageLink }
+          breakClassName={ breakClass }
+          activeClassName={ activeClass }
+          disabledClassName={ disabledClass }
+        />
+      </div>
+    }
     </div>
   )
 }

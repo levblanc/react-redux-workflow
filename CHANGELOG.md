@@ -3,10 +3,26 @@ Workflow Changelog
 
 0.1.0
 -----
-@2016-06-09
+@2016-06-27 - 2016-06-30
+- 在redux store里面全局添加ssmsAuth保存token信息
+- 所有页面修正可以向前跳，但是没办法回退的问题
+  点击不同按钮时，只改变路由
+  由View的componentWillReceiveProps方法来判断路由参数的变化
+  并获取对应的数据
+
+@2016-06-20 - 2016-06-24
+- 日期选择组件修改成可以接受用户传入filterRanges，
+   把日历整合为整个组件的一部分，不需要传入日历专有的参数
+- Redux state中，把ready状态统一改为loading状态，
+  因为ready其实和data获取完成是同一样的状态，重复了
+  全部页面改为根据loading状态来判断是否展示数据
+
+@2016-06-09 - 2016-06-17
 - 增加代码规范检测（使用airbnb规范）
 - mockup api和正式数据请求区分，让dev和mockup-dev两个命令可以各自跑起来
 - 增加git的pre-commit hook
+- 增加测试用的karma框架和必须的库：sinon, chai, mocha, enzyme
+- 写好小量的测试放在__tests__文件夹中
 
 @2016-06-06
 - `configs`和`constants`中的文件整理
@@ -14,7 +30,7 @@ Workflow Changelog
 - webpack增加`chunk-manifest-webpack-plugin`处理缓存
 - webpack增加使用`commonsChunkPlugin`，分离vendors和通用组件的分离打包，通用组件async加载
 - webpack define全局变量增加`__ENV_ALPHA__`，`__ENV_BETA__`，`__ENV_RELEASE__`在打包的时候根据打包命令来判断代码上线后的环境
-- 每个路由的文件整理为一张`.js`
+- 每个路由的文件整理为一张js
 
 @2016-05-23
 - 封装ajaxReq方法

@@ -56,7 +56,7 @@ if (isDevelopment) {
 
   app.use(express.static(constants.TARGET_FILE_DIR))
 
-  if (argv.env === 'alpha') {
+  if (argv.env === 'alpha' || argv.env === 'beta') {
     debug('路由根目录为/ssms/')
     app.get('/ssms/*', (req, res) => {
       const urlArr = req.url.split('/')

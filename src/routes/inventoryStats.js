@@ -21,8 +21,9 @@ const webpackEnsure = (store, cb) => {
   }, 'inventoryStats')
 }
 
-export default (store) => ({
-  path: 'inventory-stats',
+export default (store, requireAuth) => ({
+  path: 'inventory-stats/store/:storeId',
+  onEnter: requireAuth,
   /*  异步的 getComponent 方法，只有在路由匹配时才会触发  */
   getComponent(nextState, cb) {
     webpackEnsure(store, cb)
@@ -33,13 +34,15 @@ export default (store) => ({
       path: 'category/:categoryId',
       getComponent(nextState, cb) {
         webpackEnsure(store, cb)
-      }
-    },
-    {
-      path: 'category/:categoryId/search/:keyword',
-      getComponent(nextState, cb) {
-        webpackEnsure(store, cb)
-      }
+      },
+      childRoutes: [
+        {
+          path: 'search/:keyword',
+          getComponent(nextState, cb) {
+            webpackEnsure(store, cb)
+          }
+        }
+      ]
     }
   ]
 })

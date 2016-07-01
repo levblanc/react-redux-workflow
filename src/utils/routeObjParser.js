@@ -3,14 +3,14 @@ import globalConfig from '../configs/global'
 const { routeBasePath } = globalConfig
 
 const routeObjParser = (routeObj) => {
-  const baseRoute = `${routeBasePath}${routeObj.path}`
-  const { childRoutes } = routeObj
-  let finalRoute = ''
+  const baseRoute  = `${routeBasePath}${routeObj.path}`
+  const { params } = routeObj
+  let finalRoute   = ''
 
-  if (childRoutes) {
+  if (params) {
     const routeArr = [baseRoute]
-    Object.keys(childRoutes).forEach((key) => {
-      routeArr.push(`${key}/${childRoutes[key]}`)
+    Object.keys(params).forEach((key) => {
+      params[key] && routeArr.push(`${key}/${params[key]}`)
     })
     finalRoute = routeArr.join('/')
   } else {

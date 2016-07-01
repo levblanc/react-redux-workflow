@@ -26,7 +26,7 @@ const getApiPrefix = () => {
 const getRouteBasePath = () => {
   let routeBasePath = ''
 
-  if (__ENV_ALPHA__) {
+  if (__ENV_ALPHA__ || __ENV_BETA__) {
     routeBasePath = '/ssms/'
   } else {
     routeBasePath = '/'

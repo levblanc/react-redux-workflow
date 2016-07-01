@@ -67,8 +67,8 @@ const constants = {
   ]
 }
 
-const isDevelopment = (constants.NODE_ENV !== 'release' &&
-                      constants.NODE_ENV !== 'mockup-release')
+const isDevelopment = (constants.NODE_ENV === 'development' ||
+                      constants.NODE_ENV === 'mockup-dev')
 
 // 根据npm命令参数决定是否强制使用某个环境的接口数据
 if (argv.api) {
@@ -82,16 +82,21 @@ if (argv.env) {
   constants.COMPILE_ENV = argv.env
 }
 
-// 在本地开发环境、线上alpha、beta环境打开sourcemap
-if (isDevelopment || (argv.env && argv.env !== 'release')) {
+// 在本地开发环境、测试环境、线上alpha、beta环境打开sourcemap
+if (isDevelopment || constants.NODE_ENV === 'test' ||
+    (argv.env && argv.env !== 'release')) {
   constants.COMPILER_DEVTOOL = 'eval-cheap-module-source-map'
 }
 
-constants.COMPILER_SETTINGS.publicPath = constants.COMPILE_ENV === 'alpha' ? '/ssms/' : '/'
+const compileAlpha = constants.COMPILE_ENV === 'alpha'
+const compileBeta  = constants.COMPILE_ENV === 'beta'
+
+constants.COMPILER_SETTINGS.publicPath = (compileAlpha || compileBeta) ? '/ssms/' : '/'
 
 constants.SERVER_URI      = `http://${constants.SERVER_HOST}:${constants.SERVER_PORT}`
 constants.DIR_SRC         = path.resolve(constants.DIR_ROOT, 'src')
 constants.DIR_DIST        = path.resolve(constants.DIR_ROOT, 'dist')
+constants.DIR_TEST        = path.resolve(constants.DIR_ROOT, '__tests__')
 constants.TARGET_FILE_DIR = isDevelopment ? constants.DIR_SRC : constants.DIR_DIST
 constants.WEBPACK_DEFINE  = {
   'process.env': {
@@ -99,17 +104,19 @@ constants.WEBPACK_DEFINE  = {
               JSON.stringify('development') :
               JSON.stringify('production')
   },
-  __USE_MOCKUP_API__: (constants.NODE_ENV === 'mockup-dev' ||
+  __USE_MOCKUP_API__ : (constants.NODE_ENV === 'mockup-dev' ||
                         constants.NODE_ENV === 'mockup-release'),
-  // 用于判断是在本地开发环境，还是线上环境
-  __DEV__           : isDevelopment,
+  // 用于判断是否本地开发环境
+  __DEV__            : isDevelopment,
   // 用于判断目标代码会放哪个线上环境
-  __ENV_ALPHA__     : argv.env === 'alpha',
-  __ENV_BETA__      : argv.env === 'beta',
-  __ENV_RELEASE__   : argv.env === 'release'
+  __ENV_ALPHA__      : argv.env === 'alpha',
+  __ENV_BETA__       : argv.env === 'beta',
+  __ENV_RELEASE__    : argv.env === 'release',
+  // 用于判断是否测试环境
+  __TEST__           : constants.NODE_ENV === 'test'
 }
 
-debug(`NODE_ENV为 ${constants.NODE_ENV}`)
+debug(`NODE_ENV 设置为 ${constants.NODE_ENV}`)
 debug(`webpack publicPath 设置为 ${constants.COMPILER_SETTINGS.publicPath}`)
 debug(`webpack devtool 设置为 ${constants.COMPILER_DEVTOOL}`)
 
