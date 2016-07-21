@@ -6,22 +6,31 @@ import _debug              from 'debug'
 import path                from 'path'
 import webpack             from 'webpack'
 import constants           from '../constants/globalConsts'
-import nib from 'nib'
-import poststylus          from 'poststylus'
 import HtmlWebpackPlugin   from 'html-webpack-plugin'
 import ExtractTextPlugin   from 'extract-text-webpack-plugin'
 import CleanPlugin         from 'clean-webpack-plugin'
+import ManifestPlugin      from 'webpack-manifest-plugin'
 import ChunkManifestPlugin from 'chunk-manifest-webpack-plugin'
-// import CompressionPlugin   from 'compression-webpack-plugin'
+import configValidator     from 'webpack-validator'
 
-const debug       = _debug('app:webpack:config')
-const { __DEV__, __TEST__ } = constants.WEBPACK_DEFINE
 
-debug('装填webpack配置')
+const debug = _debug('app:webpack:config')
+const { __DEV__, __TEST__ } = constants.GLOBAL_VARS
+
+// 使用webpack-validator的Joi.object对象
+// 自定义第三方插件增加的属性
+// 否则在webpack config中直接添加这些属性
+// validator会报错
+const Joi = configValidator.Joi
+const configValidatorSchemaExtension = Joi.object({
+  stylus: Joi.any()
+})
+
+debug('🚚  装填webpack配置')
 
 const webpackConfig = {
   context : constants.DIR_ROOT,
-  progress: true,
+  watch   : true,
   resolve : {
     alias: {
       api         : path.resolve(constants.DIR_SRC, 'api'),
@@ -89,11 +98,11 @@ webpackConfig.module.loaders = [
     query: {
       cacheDirectory: true,
       plugins: ['transform-runtime'],
-      presets: ['es2015', 'react', 'stage-0', 'airbnb']
-    },
-    env: {
-      production: {
-        presets: ['react-optimize']
+      presets: ['es2015', 'react', 'stage-0', 'airbnb'],
+      env: {
+        production: {
+          presets: ['react-optimize']
+        }
       }
     }
   },
@@ -106,42 +115,45 @@ webpackConfig.module.loaders = [
   }
 ]
 
-// CSS loader
+// Stylus loader 配置
+const extractSTYLUS = new ExtractTextPlugin('[name].[hash:6].css', {
+  allChunks: false
+})
+
 const cssModulesLoader = [
   'css?sourceMap',
   'modules',
   'localIdentName=[local]___[hash:base64:5]'
 ].join('&')
 
-webpackConfig.module.loaders.push({
-  test: /\.(css|styl)$/,
-  loaders: [
-    'style',
-    cssModulesLoader,
-    'stylus?outputStyle=expanded&sourceMap'
-  ]
-})
+const sytlusLoader = [
+  'stylus?outputStyle=expanded',
+  'sourceMap'
+].join('&')
 
-// 在 release 环境中使用ExtractTextPlugin
-if (!__DEV__ && !__TEST__) {
-  debug('使用CSS ExtractTextPlugin')
-  webpackConfig.module.loaders.filter((loader) =>
-    loader.loaders && loader.loaders.find((name) => /css/.test(name.split('?')[0]))
-  ).forEach((loader) => {
-    const [first, ...rest] = loader.loaders
-    Object.assign(loader, {
-      loader: ExtractTextPlugin.extract(first, rest.join('!'))
-    })
-    Reflect.deleteProperty(loader, 'loaders')
-  })
+const stylusLoaderConfig = {
+  test   : /\.styl$/i,
+  exclude: /node_modules/
 }
+
+if (__DEV__ || __TEST__) {
+  stylusLoaderConfig.loaders = [
+    'style-loader',
+    cssModulesLoader,
+    sytlusLoader
+  ]
+} else {
+  stylusLoaderConfig.loader = extractSTYLUS.extract(
+    'style-loader',
+    cssModulesLoader.concat('!', sytlusLoader)
+  )
+}
+
+webpackConfig.module.loaders.push(stylusLoaderConfig)
 
 // 使用stylus nib插件
 webpackConfig.stylus = {
-  use: [
-    nib(),
-    poststylus(['autoprefixer'])
-  ],
+  use: [require('nib')()],
   import: ['~nib/lib/nib/index.styl']
 }
 
@@ -150,9 +162,10 @@ webpackConfig.stylus = {
 // Plugins配置
 // ======================================
 webpackConfig.plugins = [
-  new webpack.DefinePlugin(constants.WEBPACK_DEFINE),
+  new webpack.DefinePlugin(constants.GLOBAL_VARS),
+  new ManifestPlugin(),
   new ChunkManifestPlugin({
-    filename        : 'manifest.json',
+    filename        : 'chunk-manifest.json',
     manifestVariable: 'webpackManifest'
   })
 ]
@@ -165,15 +178,14 @@ const htmlPluginConfigs = {
   inject  : 'body'
 }
 
-if (__DEV__) {
+if (__DEV__ || __TEST__) {
   debug('使用开发环境webpack插件(HMR, NoErrors)')
   webpackConfig.plugins.push(
     new HtmlWebpackPlugin(htmlPluginConfigs),
-    // Hot Reload
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoErrorsPlugin()
   )
-} else if (!__TEST__) {
+} else {
   // 非本地开发环境 && 非测试环境 => 线上环境
   debug('使用release环境webpack插件(Dedupe, OccurenceOrder, CommonsChunk, UglifyJS)')
 
@@ -189,29 +201,26 @@ if (__DEV__) {
   }
 
   if (constants.COMPILE_ENV === 'release') {
-    debug('使用release环境JS压缩配置：unused && dead_code')
+    debug('使用release环境JS压缩配置：unused && dead_code && no comments')
     compressConfigs.compress = {
       ...compressConfigs.compress,
       unused   : true,
       dead_code: true
     }
+    compressConfigs.output = {
+      comments: false
+    }
   }
 
   webpackConfig.plugins.push(
     // 清空dist文件夹
-    new CleanPlugin([constants.DIR_DIST], { root: constants.DIR_ROOT }),
-    new ExtractTextPlugin('[name].[contenthash:6].css', {
-      allChunks: true
+    new CleanPlugin([constants.DIR_DIST], {
+      root: constants.DIR_ROOT
     }),
-    new HtmlWebpackPlugin(htmlPluginConfigs),
-    // 防止重复引入相同的依赖
-    new webpack.optimize.DedupePlugin(),
-    new webpack.optimize.OccurrenceOrderPlugin(),
-    // 一定要使用 CommonsChunkPlugin 把 vendors 的打包文件分离出来
-    // 只是在 entry 处分离的话，一样会打包进去 app.js ，导致文件过大!!!
+    extractSTYLUS,
+    new webpack.NamedModulesPlugin(),
     new webpack.optimize.CommonsChunkPlugin({
       name     : 'vendors',
-      filename : 'vendors.[hash:6].js',
       minChunks: Infinity
     }),
     new webpack.optimize.CommonsChunkPlugin({
@@ -219,18 +228,18 @@ if (__DEV__) {
       async    : true,
       minChunks: 3
     }),
+    new HtmlWebpackPlugin(htmlPluginConfigs),
+    // 防止重复引入相同的依赖
+    new webpack.optimize.DedupePlugin(),
+    new webpack.optimize.OccurrenceOrderPlugin(true),
     // 压缩JS
-    new webpack.optimize.UglifyJsPlugin(compressConfigs)
-    // 预压缩gzip文件，服务器请求css, js时马上提供对应的压缩文件
-    // !!! 注意：服务器端需做对应配置 !!!
-    // new CompressionPlugin({
-    //   asset    : "[path].gz[query]",
-    //   algorithm: "gzip",
-    //   test     : /\.css$|\.js$/,
-    //   threshold: 10240,
-    //   minRatio : 0.8
-    // })
+    new webpack.optimize.UglifyJsPlugin(compressConfigs),
+    new webpack.optimize.AggressiveMergingPlugin()
   )
 }
 
-export default webpackConfig
+const validateWebpackConfigs = configValidator(webpackConfig, {
+  schemaExtension: configValidatorSchemaExtension
+})
+
+export default validateWebpackConfigs

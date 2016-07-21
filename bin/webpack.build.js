@@ -1,13 +1,16 @@
-import webpack       from 'webpack'
-import _debug        from 'debug'
-import webpackConfig from '../src/configs/webpack'
-import constants     from '../src/constants/globalConsts'
+import webpack         from 'webpack'
+import _debug          from 'debug'
+import webpackConfig   from '../src/configs/webpack.config'
+import constants       from '../src/constants/globalConsts'
+import webpackProgress from './webpackProgress'
 
 const debug = _debug('app:bin:build')
 
 const webpackCompiler = (webpackConfig, compilerStats) => {
   return new Promise((resolve, reject) => {
     const compiler = webpack(webpackConfig)
+
+    webpackProgress(compiler)
 
     compiler.run((err, stats) => {
       const jsonStats = stats.toJson()
@@ -24,8 +27,6 @@ const webpackCompiler = (webpackConfig, compilerStats) => {
       } else if (jsonStats.warnings.length > 0) {
         debug('WARNING: Webpack打包时出现以下警告')
         debug(jsonStats.warnings.join('\n'))
-      } else {
-        debug('Webpack打包顺利完成！无错误，无警告。')
       }
 
       resolve(jsonStats)
@@ -35,7 +36,6 @@ const webpackCompiler = (webpackConfig, compilerStats) => {
 
 ;(async function () {
   try {
-    debug('webpack打包开始，请稍候……')
     let compilerStats = constants.COMPILER_SETTINGS.stats
     const stats = await webpackCompiler(webpackConfig, compilerStats)
     if (stats.warnings.length) {
