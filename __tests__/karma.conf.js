@@ -1,5 +1,5 @@
 import constants     from '../src/constants/globalConsts'
-import webpackConfig from '../src/configs/webpack'
+import webpackConfig from '../src/configs/webpack.config'
 import _debug        from 'debug'
 import argv          from 'minimist-argv'
 
