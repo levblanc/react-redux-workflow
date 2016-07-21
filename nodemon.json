@@ -2,7 +2,6 @@
   "verbose": false,
   "watch": [
     "bin/server.js",
-    "src/configs",
-    "src/appInit.js"
+    "src/configs"
   ]
 }
