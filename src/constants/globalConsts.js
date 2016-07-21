@@ -8,7 +8,7 @@ import argv   from 'minimist-argv'
 
 const debug = _debug('app:global:config')
 
-debug('装填全局常量配置')
+debug('🚚  装填全局常量配置')
 
 const constants = {
   NODE_ENV : process.env.NODE_ENV,
@@ -43,19 +43,25 @@ const constants = {
   // Webpack Compiler配置
   // ====================================
   COMPILER_SETTINGS: {
-    hot        : true,
-    headers    : { 'Access-Control-Allow-Origin': '*' },
-    heartbeat  : 10 * 1000,
-    quiet      : false,
-    noInfo     : false,
-    stats      : {
-      colors      : true,
-      chunks      : false,
-      chunkModules: false,
-      modules     : false,
-      children    : false
+    hot      : true,
+    cache    : true,
+    quiet    : false,
+    noInfo   : false,
+    stats    : {
+        assets      : false,
+        hash        : false,
+        version     : false,
+        timings     : false,
+        colors      : true,
+        chunks      : false,
+        chunkModules: false,
+        modules     : false,
+        children    : false
     }
   },
+  // ====================================
+  // 打包到vendors.js的文件配置
+  // ====================================
   COMPILER_VENDORS : [
     'react',
     'react-dom',
@@ -85,7 +91,7 @@ if (argv.env) {
 // 在本地开发环境、测试环境、线上alpha、beta环境打开sourcemap
 if (isDevelopment || constants.NODE_ENV === 'test' ||
     (argv.env && argv.env !== 'release')) {
-  constants.COMPILER_DEVTOOL = 'eval-cheap-module-source-map'
+  constants.COMPILER_DEVTOOL = 'cheap-module-eval-source-map'
 }
 
 const compileAlpha = constants.COMPILE_ENV === 'alpha'
@@ -98,7 +104,7 @@ constants.DIR_SRC         = path.resolve(constants.DIR_ROOT, 'src')
 constants.DIR_DIST        = path.resolve(constants.DIR_ROOT, 'dist')
 constants.DIR_TEST        = path.resolve(constants.DIR_ROOT, '__tests__')
 constants.TARGET_FILE_DIR = isDevelopment ? constants.DIR_SRC : constants.DIR_DIST
-constants.WEBPACK_DEFINE  = {
+constants.GLOBAL_VARS  = {
   'process.env': {
     NODE_ENV: isDevelopment ?
               JSON.stringify('development') :
