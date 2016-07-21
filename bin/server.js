@@ -8,17 +8,21 @@ import webpack              from 'webpack'
 import webpackDevMiddleware from 'webpack-dev-middleware'
 import webpackHMRMiddleware from 'webpack-hot-middleware'
 import historyApiFallback   from 'connect-history-api-fallback'
-import webpackConfig        from '../src/configs/webpack'
+import webpackConfig        from '../src/configs/webpack.config'
 import constants            from '../src/constants/globalConsts'
 import argv                 from 'minimist-argv'
+import webpackProgress      from './webpackProgress'
 
-const debug = _debug('app:server:init')
+const debug = _debug('app:server:::init')
 const app   = express()
 
+let serverInfo = ''
 const isDevelopment = (constants.NODE_ENV !== 'release' &&
                       constants.NODE_ENV !== 'mockup-release')
 
-debug('server启动中……')
+const sourceCodeDir = isDevelopment ? 'src' : 'dist'
+
+debug('🖥  server启动中……')
 
 if (isDevelopment) {
   debug('server读取开发环境配置')
@@ -30,6 +34,9 @@ if (isDevelopment) {
   }
 
   const compiler = webpack(webpackConfig)
+
+  webpackProgress(compiler)
+
   const devMiddleware = webpackDevMiddleware(compiler, constants.COMPILER_SETTINGS)
 
   // !!! historyApiFallback !!!
@@ -40,6 +47,8 @@ if (isDevelopment) {
 
   app.use(devMiddleware)
   app.use(webpackHMRMiddleware(compiler))
+
+  serverInfo = `🌎  server@${constants.SERVER_URI}已启动，请静候webpack完成打包进程`
 
   // 使用 historyApiFallback 之后
   // 下面这段代码就算删掉也不会出问题
@@ -73,11 +82,13 @@ if (isDevelopment) {
       res.sendFile(path.join(constants.TARGET_FILE_DIR, 'index.html'))
     })
   }
+
+  serverInfo = `🌎  server已启动。在浏览器中打开${constants.SERVER_URI}`
 }
 
 app.listen(constants.SERVER_PORT, (err) => {
   if (err) console.error(`SERVER ERROR: ${err}`)
-  debug(`server正从 ${constants.TARGET_FILE_DIR} 文件夹读取文件`)
-  debug(`server@${constants.SERVER_URI}已启动`)
+  debug(`📂  server正从 ${sourceCodeDir} 文件夹读取文件`)
+  debug(serverInfo)
 })
 
